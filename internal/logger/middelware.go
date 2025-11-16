@@ -11,21 +11,21 @@ import (
 func GinLogger(l *Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
-		
+
 		reqID := c.GetHeader("X-Request-ID")
 		if reqID == "" {
 			reqID = uuid.New().String()
 		}
-		
+
 		//store in the context
 		ctx := c.Request.Context()
 		ctx = contextWithRequestID(ctx, reqID)
 		c.Request = c.Request.WithContext(ctx)
-		
+
 		c.Next()
-		
+
 		latency := time.Since(start)
-		
+
 		l.Infof("incoming requests",
 		"method", c.Request.Method,
 		"path", c.FullPath(),
