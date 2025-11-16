@@ -1,6 +1,6 @@
 # Go-tly: A Go-based Tiny URL Shortener.
 
-![Architecture Diagram](GOTLY.png)
+![Architecture Diagram](./images/GOTLY.png)
 
 Go-tly is a high-performance URL shortener built using Go to levearage go backend and basics of system design, 
 featuring:
