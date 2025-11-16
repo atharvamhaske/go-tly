@@ -1,0 +1,19 @@
+app:
+  name: gotly
+  env: dev
+  port: "8080"
+
+mongodb:
+  uri: "mongodb://localhost:27017"
+  database: "gotly"
+
+redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+
+clickhouse:
+  dsn: "tcp://localhost:9000?database=shortly"
+
+grpc:
+  kgs_server_addr: "localhost:50051"
