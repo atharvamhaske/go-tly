@@ -1,42 +1,39 @@
 package logger
 
 import (
-	"context"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 )
 
-func GinLogger(l *Logger) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		start := time.Now()
+func (l *Logger) EchoLogger() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			start := time.Now()
+			req := c.Request()
+			res := c.Response()
 
-		reqID := c.GetHeader("X-Request-ID")
-		if reqID == "" {
-			reqID = uuid.New().String()
+			//genarate request ID
+			reqID := req.Header.Get("X-Request-ID")
+			if reqID == "" {
+				reqID = uuid.NewString()
+			}
+			c.Set("request_id", reqID)
+
+			err := next(c)
+
+			latency := time.Since(start)
+
+			l.Infow("incoming request",
+				"request_id", reqID,
+				"method", req.Method,
+				"path", req.URL.Path,
+				"status", res.Status,
+				"latency_ms", latency.Milliseconds(),
+				"ip", c.RealIP(),
+			)
+			return err
 		}
-
-		//store in the context
-		ctx := c.Request.Context()
-		ctx = contextWithRequestID(ctx, reqID)
-		c.Request = c.Request.WithContext(ctx)
-
-		c.Next()
-
-		latency := time.Since(start)
-
-		l.Infof("incoming requests",
-		"method", c.Request.Method,
-		"path", c.FullPath(),
-		"status", c.Writer.Status(),
-		"latency_ms", latency.Milliseconds(),
-		"client_ip", c.ClientIP(),
-		"request_id", reqID,
-		)
 	}
-}
-
-func contextWithRequestID(ctx context.Context, reqID string) context.Context {
-	return context.WithValue(ctx, "request_id", reqID)
 }

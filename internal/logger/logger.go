@@ -35,11 +35,11 @@ func NewLogger(cfg *config.Config) (*Logger, error) {
 	return &Logger{SugaredLogger: base.Sugar()}, nil
 }
 
-func GetLoggerWithCtx(ctx context.Context) *Logger{
+func GetLoggerWithCtx(ctx context.Context) *Logger {
 	reqID, _ := ctx.Value("request_id").(string)
 	userID, _ := ctx.Value("user_id").(string)
 
-	return &Logger {
+	return &Logger{
 		SugaredLogger: L.SugaredLogger.With(
 			"request_id", reqID,
 			"user_id", userID,
@@ -47,7 +47,7 @@ func GetLoggerWithCtx(ctx context.Context) *Logger{
 	}
 }
 
-//additional wrapper if need(directly used from some codebase)
+// additional wrapper if need(directly used from some codebase)
 func (l *Logger) Debugf(t string, args ...interface{}) { l.SugaredLogger.Debugf(t, args...) }
 func (l *Logger) Infof(t string, args ...interface{})  { l.SugaredLogger.Infof(t, args...) }
 func (l *Logger) Warnf(t string, args ...interface{})  { l.SugaredLogger.Warnf(t, args...) }
