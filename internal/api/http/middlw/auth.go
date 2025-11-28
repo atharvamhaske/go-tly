@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/atharvamhaske/go-tly/internal/util"
 	"github.com/labstack/echo/v4"
 )
 
@@ -22,7 +23,7 @@ func AuthReq(secret string) echo.MiddlewareFunc {
 
 			token := parts[1]
 
-			userID, err := ValidateJWT(token, secret)
+			userID, err := util.ValidateJWT(token, secret)
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, echo.Map{"error": "invalid token"})
 			}
