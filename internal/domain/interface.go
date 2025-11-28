@@ -62,3 +62,7 @@ type HealthService interface {
 
 // apan response me pointer use karte and req me nahi kyuki req cant be nil
 // as not pointer types can never be nil
+// service(domain) layers ko full data chhaiye hota hai and usme se jo bhi data client ko chahiye wo handler de deta hai 
+// as i earlier had doubt ki why return *models.User when signup just return *models.SignUpResponse so this comment clears the doubt
+// handler ka kam hai service ko call karna, repsonse client ko bhejna and all, repository is like service of DB one who calls db as we dont want service to 
+// know details of DB
