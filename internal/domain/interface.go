@@ -15,7 +15,7 @@ type URLRepo interface {
 }
 
 type UserRepo interface {
-	Create (ctx context.Context, u *models.User) error
+	Create(ctx context.Context, u *models.User) error
 	FindByEmail(ctx context.Context, email string) (*models.User, error)
 	FindByID(ctx context.Context, id string) (*models.User, error)
 }
@@ -30,11 +30,11 @@ type DomainHealthRepo interface {
 	Get(ctx context.Context, url string) (*models.DomainHealth, error)
 }
 
-//cache interface
+// cache interface
 type URLCache interface {
 	SetKey(ctx context.Context, key string, url string) error
 	GetKey(ctx context.Context, key string) (string, error)
-	DeleteKey(ctx context.Context, key string) (string, error)	
+	DeleteKey(ctx context.Context, key string) (string, error)
 }
 
 //service interfaces
@@ -46,6 +46,19 @@ type URLService interface {
 	Resolve(ctx context.Context, key string) (string, error)
 }
 
-type UserService interface {}
+type UserService interface {
+	SignUp(ctx context.Context, req models.SignUpRequest) (*models.User, error)
+	SignIn(ctx context.Context, req models.SignInRequest) (string, error)
+}
 
-type AnalyticsService interface {}
+type AnalyticsService interface {
+	LogClick(ctx context.Context, evt models.ClickEvents) error
+	GetSummary(ctx context.Context, key string) (*models.AnalyticsSummary, error)
+}
+
+type HealthService interface {
+	CheckDomain(ctx context.Context, url string) (*models.DomainHealth, error)
+}
+
+// apan response me pointer use karte and req me nahi kyuki req cant be nil
+// as not pointer types can never be nil

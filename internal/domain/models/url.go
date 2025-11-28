@@ -35,5 +35,5 @@ type EditURLRequest struct {
 }
 
 type ResolveResponse struct {
-     	LongURL string `json:"long_url"`
+	LongURL string `json:"long_url"`
 } //this is for stroing in cache
