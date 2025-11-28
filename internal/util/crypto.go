@@ -18,12 +18,12 @@ func GenerateJWT(userID string, secret string, expiry time.Duration) (string, er
 	claims := &Claims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
-			IssuedAt: jwt.NewNumericDate(time.Now()),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiry)),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
-	
+
 	return token.SignedString([]byte(secret))
 }
 
@@ -42,11 +42,11 @@ func ValidateJWT(tokenStr string, secret string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	
+
 	claims, ok := token.Claims.(*Claims)
 	if !ok || !token.Valid {
 		return "", errors.New("invalid token claims")
 	}
-	
+
 	return claims.UserID, nil
 }

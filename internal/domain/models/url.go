@@ -27,3 +27,13 @@ type ShortenResponse struct {
 	ShortURL string `json:"short_url"`
 	ShortKey string `json:"short_key"`
 }
+
+//when user wants to edit shortkey
+
+type EditURLRequest struct {
+	LongURL string `json:"long_url,omitempty" validate:"omitempty,url"`
+}
+
+type ResolveResponse struct {
+     	LongURL string `json:"long_url"`
+} //this is for stroing in cache

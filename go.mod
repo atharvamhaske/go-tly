@@ -8,6 +8,7 @@ require (
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/redis/go-redis/v9 v9.17.1
 	github.com/spf13/viper v1.21.0
+	go.mongodb.org/mongo-driver v1.17.6
 	go.uber.org/zap v1.27.0
 )
 
