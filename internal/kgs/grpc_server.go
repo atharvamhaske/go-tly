@@ -4,14 +4,15 @@ import (
 	"context"
 	"net"
 
+	kgsgen "github.com/atharvamhaske/go-tly/internal/kgs/generated"
 	"google.golang.org/grpc"
 )
 
 // grpcServer implements the generated KGS gRPC server interface.
-// It must embed UnimplementedKGSServer by value to satisfy the KGSServer
-// interface generated in service_grpc.pb.go.
+// It must embed kgsgen.UnimplementedKGSServer by value to satisfy the
+// kgsgen.KGSServer interface generated in service_grpc.pb.go.
 type grpcServer struct {
-	UnimplementedKGSServer
+	kgsgen.UnimplementedKGSServer
 	svc Service
 }
 
@@ -21,15 +22,16 @@ func NewGRPCServer(svc Service) *grpcServer {
 }
 
 // GetKey handles the gRPC request by delegating to the Service.
-func (s *grpcServer) GetKey(ctx context.Context, _ *GetKeyRequest) (*GetKeyResponse, error) {
+func (s *grpcServer) GetKey(ctx context.Context, _ *kgsgen.GetKeyRequest) (*kgsgen.GetKeyResponse, error) {
 	key, err := s.svc.GenerateKey(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return &GetKeyResponse{Key: key}, nil
+	return &kgsgen.GetKeyResponse{Key: key}, nil
 }
 
 // Run starts a standalone gRPC server for the KGS on the given address, e.g. ":50051".
+
 func Run(addr string, svc Service) error {
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -37,7 +39,7 @@ func Run(addr string, svc Service) error {
 	}
 
 	server := grpc.NewServer()
-	RegisterKGSServer(server, NewGRPCServer(svc))
+	kgsgen.RegisterKGSServer(server, NewGRPCServer(svc))
 
 	return server.Serve(lis)
 }
