@@ -37,6 +37,14 @@ type URLCache interface {
 	DeleteKey(ctx context.Context, key string) (string, error)
 }
 
+// gRPC interfaces
+// KGSClient abstracts the Key Generation Service gRPC client so that
+// domain services can depend on this interface instead of a concrete
+// gRPC implementation.
+type KGSClient interface {
+	GetKey(ctx context.Context) (string, error)
+}
+
 //service interfaces
 
 type URLService interface {
@@ -62,7 +70,7 @@ type HealthService interface {
 
 // apan response me pointer use karte and req me nahi kyuki req cant be nil
 // as not pointer types can never be nil
-// service(domain) layers ko full data chhaiye hota hai and usme se jo bhi data client ko chahiye wo handler de deta hai 
+// service(domain) layers ko full data chhaiye hota hai and usme se jo bhi data client ko chahiye wo handler de deta hai
 // as i earlier had doubt ki why return *models.User when signup just return *models.SignUpResponse so this comment clears the doubt
-// handler ka kam hai service ko call karna, repsonse client ko bhejna and all, repository is like service of DB one who calls db as we dont want service to 
+// handler ka kam hai service ko call karna, repsonse client ko bhejna and all, repository is like service of DB one who calls db as we dont want service to
 // know details of DB

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package kgs;
+
+option go_package = "github.com/atharvamhaske/go-tly/internal/kgs;kgs";
+
+// KGS defines a simple Key Generation Service.
+
+service KGS {
+  // GetKey returns a single fresh key.
+  rpc GetKey (GetKeyRequest) returns (GetKeyResponse);
+}
+
+message GetKeyRequest {}
+
+message GetKeyResponse {
+  string key = 1;
+}
