@@ -8,15 +8,18 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/atharvamhaske/go-tly/internal/domain"
 	"github.com/atharvamhaske/go-tly/internal/domain/models"
 )
 
-type HealthChecker struct {
+// cloudflareHealthService implements domain.HealthService interface.
+type cloudflareHealthService struct {
 	httpClient *http.Client
 }
 
-func NewHealthChecker() *HealthChecker {
-	return &HealthChecker{
+// NewHealthService creates a HealthService implementation using Cloudflare.
+func NewHealthService() domain.HealthService {
+	return &cloudflareHealthService{
 		httpClient: &http.Client{
 			Timeout: 10 * time.Second,
 			Transport: &http.Transport{
@@ -28,9 +31,9 @@ func NewHealthChecker() *HealthChecker {
 	}
 }
 
-// CheckDomainHealth validates a URI's health.
-func (h *HealthChecker) CheckDomainHealth(ctx context.Context, uri string) (*models.DomainHealth, error) {
-	parsedURL, err := url.Parse(uri)
+// CheckDomain implements domain.HealthService interface.
+func (h *cloudflareHealthService) CheckDomain(ctx context.Context, domainURL string) (*models.DomainHealth, error) {
+	parsedURL, err := url.Parse(domainURL)
 	if err != nil {
 		return nil, fmt.Errorf("invalid URL: %w", err)
 	}
@@ -42,22 +45,20 @@ func (h *HealthChecker) CheckDomainHealth(ctx context.Context, uri string) (*mod
 		LatencyMS:   0,
 	}
 
-	// Check DNS resolution
 	start := time.Now()
-	resp, err := h.httpClient.Get(uri)
+	resp, err := h.httpClient.Get(domainURL)
 	latency := time.Since(start)
 	health.LatencyMS = latency.Milliseconds()
 
 	if err != nil {
 		health.Message = fmt.Sprintf("DNS/Connection error: %v", err)
-		return health, nil // Return partial health info
+		return health, nil
 	}
 	defer resp.Body.Close()
 
 	health.DNSResolved = true
 	health.StatusCode = resp.StatusCode
 
-	// Check SSL if HTTPS
 	if parsedURL.Scheme == "https" {
 		if resp.TLS != nil && len(resp.TLS.PeerCertificates) > 0 {
 			health.SSLValid = true
